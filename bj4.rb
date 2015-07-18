@@ -1,13 +1,6 @@
 require 'pry'
 
-
 puts " \n\n <<<<Welcome to Computer Blackjack>>>\n\n"
-
-begin
-  puts "Would you like to play - Y/N?"
-  answer = gets.chomp.downcase
-  exit if answer == "n"
-end until answer == "y"
  
 # def build_deck
 cards = [ 2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
@@ -24,10 +17,10 @@ deck
 deck.shuffle!
 player_cards = []
 dealer_cards = []
-player_cards << deck.pop
-dealer_cards << deck.pop
-player_cards << deck.pop
-dealer_cards << deck.pop
+2.times do
+  player_cards << deck.pop
+  dealer_cards << deck.pop
+end
 
 def score(cards)
   arr = cards.map{ |e| e[0] }
@@ -45,7 +38,7 @@ def score(cards)
 
   #correct for Aces
   arr.select{|e| e == "A"}.count.times do
-    total -= 10 if total > 21
+    total > 21 ? total -= 10 : break
   end
   total
 end
@@ -53,49 +46,27 @@ end
 player_score = score(player_cards)
 dealer_score = score(dealer_cards)
 
-
-# def play_again?
-#     puts "Would you like to play again - Y/N?"
-#     answer = gets.chomp.downcase
-#     exit if answer == "n"
-#     if hit_stay != "y"
-#       puts "Input must be either 'Y' or 'N'"
-#       next
-#     end
-#     if answer == "y"
-#       deck.shuffle!
-#       player_cards = []
-#       dealer_cards = []
-#       player_cards << deck.pop
-#       dealer_cards << deck.pop
-#       player_cards << deck.pop
-#       dealer_cards << deck.pop
-#     end
-# end
-
 def print_bust(name, score)
   puts "#{name} has gone bust this round with a card total of #{score}!"
-  # play_again?
+  exit
 end
 
 def print_winner(name, score)
   puts "#{name} has won this round with a card total of #{score}!"
-  # play_again?
+  exit
 end
 
 def print_tie(name, score)
   puts "#{name} and dealer have tied this round with a card total of #{score} each!"
-  # play_again?
+  exit
 end
 
-def get_card(deck, cards, newscore)
-  while 
-    deck.shuffle!
-    hit_card = deck.pop
-    cards << hit_card
-    score = score(cards)
-  end
-end
+#Start Game
+begin
+  puts "Would you like to play - Y/N?"
+  answer = gets.chomp.downcase
+  exit if answer == "n"
+end until answer == "y"
 
 puts  "What is your first name?"
 first_name = gets.chomp.capitalize
@@ -103,12 +74,16 @@ puts "#{first_name}, you've been dealt two cards: #{player_cards[0]} and #{playe
 puts "The dealer has been dealt two cards:  #{dealer_cards[0]} and #{dealer_cards[1]}. "
 puts "#{first_name}, you have a total of #{player_score} and the dealer has a total of #{dealer_score}."
 
+#Player turn
 if player_score == 21
-    print_winner(first_name, player_score)
+  print_winner(first_name, player_score)
+  exit
 end
+
 if dealer_score == 21
   first_name = "Dealer"
   print_winner(first_name, dealer_score)
+  exit
 end
   
 puts ""
@@ -119,6 +94,7 @@ while player_score < 21
   if hit_stay == "s"
     break
   end
+
   if hit_stay != "h"
     puts "Input must be either 'H' or 'S'"
     next
@@ -138,7 +114,7 @@ while player_score < 21
   end
 end
 
-#Dealer
+#Dealer turn
 while dealer_score < 17
   hit_card = deck.pop
   dealer_cards << hit_card
@@ -155,15 +131,16 @@ while dealer_score < 17
     print_bust(first_name, dealer_score)
     exit
   end
-
-  puts "You have a total of #{player_score}. Dealer has a total of #{dealer_score}."
-  if player_score == dealer_score
-    print_tie(first_name, player_score)
-  elsif player_score > dealer_score
-    print_winner(first_name, player_score)
-  else
-    first_name = "Dealer"
-    print_winner(first_name, dealer_score)
-  end
 end
-  
+
+puts "You have a total of #{player_score}. Dealer has a total of #{dealer_score}."
+puts ""
+
+if player_score == dealer_score
+  print_tie(first_name, player_score)
+elsif player_score > dealer_score
+  print_winner(first_name, player_score)
+else
+  first_name = "Dealer"
+  print_winner(first_name, dealer_score)
+end
