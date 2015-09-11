@@ -1,2 +1,2 @@
 # blackjack
-Ruby CLI one person game of blackjack. Computer is the dealer.
+Ruby CLI two player game of blackjack. Procedural programming style with computer as the dealer.
